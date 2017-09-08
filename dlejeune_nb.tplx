@@ -6,6 +6,7 @@
 
 ((* block docclass *))
     \documentclass{dlejeune_hw}
+    \signaturefalse
 ((* endblock docclass *))
 
 ((* block commands *))

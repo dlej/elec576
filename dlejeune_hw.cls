@@ -2,6 +2,7 @@
 \ProvidesClass{dlejeune_nb}
 
 \def\dlejeunemargin{0.75in}
+\newif\ifsignature
 
 \RequirePackage{titling}
 \RequirePackage[margin=\dlejeunemargin]{geometry}
@@ -38,9 +39,10 @@
     \setlength{\parskip}{3mm}
 	\textbf{Honor System Pledge:} {\em On my honor, I have neither given nor received any unauthorized aid on this assignment.}
 
-	\vspace{0.5em}
-
-    Signature: \makebox[2.5in]{\hrulefill}
+    \ifsignature
+        \vspace{0.5em}
+        Signature: \makebox[2.5in]{\hrulefill}
+	\fi
 
     \vspace{1em}
 

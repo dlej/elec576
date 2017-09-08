@@ -1,0 +1,146 @@
+((*- extends 'article.tplx' -*))
+
+%===============================================================================
+% Preamble
+%===============================================================================
+
+((* block docclass *))
+    \documentclass{dlejeune_hw}
+((* endblock docclass *))
+
+((* block commands *))
+    \usepackage[margin=\dlejeunemargin]{geometry}
+((* endblock commands *))
+
+%===============================================================================
+% Metadata
+%===============================================================================
+
+% Author and Title from metadata
+((* block maketitle *))
+
+((*- if nb.metadata["latex_metadata"] -*))
+
+((*- if nb.metadata["latex_metadata"]["author"] -*))
+    \author{((( nb.metadata["latex_metadata"]["author"] )))}
+((*- else -*))
+    \author{John Doe}
+((*- endif -*))
+
+((*- if nb.metadata["latex_metadata"]["VARname"] -*))
+    \def\VARname{((( nb.metadata["latex_metadata"]["VARname"] )))}
+((*- else -*))
+    \def\VARname{John Doe (123-45-6789)}
+((*- endif -*))
+
+((*- if nb.metadata["latex_metadata"]["VARclass"] -*))
+    \def\VARclass{((( nb.metadata["latex_metadata"]["VARclass"] )))}
+((*- else -*))
+    \def\VARclass{LIFE 101}
+((*- endif -*))
+
+((*- if nb.metadata["latex_metadata"]["VARassignment"] -*))
+    \def\VARassignment{((( nb.metadata["latex_metadata"]["VARassignment"] )))}
+((*- else -*))
+    \def\VARassignment{HW \# 1}
+((*- endif -*))
+
+((*- if nb.metadata["latex_metadata"]["VARdue"] -*))
+    \def\VARdue{((( nb.metadata["latex_metadata"]["VARdue"] )))}
+((*- else -*))
+    \def\VARdue{\today}
+((*- endif -*))
+
+((*- if nb.metadata["latex_metadata"]["title"] -*))
+    \title{((( nb.metadata["latex_metadata"]["title"] )))}
+((* elif (nb.metadata["latex_metadata"]["VARclass"] and nb.metadata["latex_metadata"]["VARassignment"]) *))
+    \title{((( nb.metadata["latex_metadata"]["VARclass"] ))) -- ((( nb.metadata["latex_metadata"]["VARassignment"] )))}
+((*- else -*))
+    \title{((( resources.metadata.name )))}
+((*- endif -*))
+
+((*- endif -*))
+
+\date{\today}
+\maketitle
+((* endblock maketitle *))
+
+%===============================================================================
+% Hidden cells
+%===============================================================================
+
+((* block any_cell *))
+((*- if cell.metadata.hide_output -*))
+((*- else -*))
+    ((( super() )))
+((*- endif -*))
+((* endblock any_cell *))
+
+%===============================================================================
+% Markdown cells
+%===============================================================================
+
+((* block markdowncell *))
+    \setlength{\parindent}{0mm}
+    \setlength{\parskip}{3mm}
+    ((( super() )))
+((* endblock markdowncell *))
+
+%===============================================================================
+%===============================================================================
+% BEGIN FROM http://www.markus-beuckelmann.de/blog/customizing-nbconvert-pdf.html
+%===============================================================================
+%===============================================================================
+
+%===============================================================================
+% Input
+%===============================================================================
+
+((* block input scoped *))
+   ((( custom_add_prompt(cell.source | wrap_text(120) | highlight_code(strip_verbatim=True), cell, 'In ', 'incolor') )))
+((* endblock input *))
+
+%===============================================================================
+% Output
+%===============================================================================
+
+% Display stream ouput with coloring
+((* block stream *))
+    \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
+((( output.text | wrap_text(128) | escape_latex | ansi2latex )))
+    \end{Verbatim}
+((* endblock stream *))
+
+((* block execute_result scoped *))
+    ((*- for type in output.data | filter_data_type -*))
+        ((*- if resources.global_content_filter.include_output_prompt -*))
+            ((*- if type in ['text/plain'] *))
+((( custom_add_prompt(output.data['text/plain'] | wrap_text(120) | escape_latex, cell, 'Out ', 'outcolor') )))
+            ((* else -*))
+\texttt{\color{outcolor}Out[{\color{outcolor}((( cell.execution_count )))}]:}((( super() )))
+            ((*- endif -*))
+        ((*- endif -*))
+    ((*- endfor -*))
+((* endblock execute_result *))
+
+%==============================================================================
+% Define macro custom_add_prompt() (derived from add_prompt() macro in style_ipython.tplx)
+%==============================================================================
+
+((* macro custom_add_prompt(text, cell, prompt, prompt_color) -*))
+    ((*- if cell.execution_count is defined -*))
+    ((*- set execution_count = "" ~ (cell.execution_count | replace(None, " ")) -*))
+    ((*- else -*))
+    ((*- set execution_count = " " -*))
+    ((*- endif -*))
+    ((*- set indention =  " " * (execution_count | length + 7) -*))
+\begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
+((( text | add_prompts(first='{\color{' ~ prompt_color ~ '}' ~ prompt ~ '[{\\color{' ~ prompt_color ~ '}' ~ execution_count ~ '}]:} ', cont=indention) )))
+\end{Verbatim}
+((*- endmacro *))
+
+%===============================================================================
+%===============================================================================
+% END FROM http://www.markus-beuckelmann.de/blog/customizing-nbconvert-pdf.html
+%===============================================================================
+%===============================================================================

@@ -1,11 +1,11 @@
 \LoadClass[10pt]{article}
-\ProvidesClass{dlejeune_nb}
+\ProvidesClass{dlejeune_hw}
 
 \def\dlejeunemargin{0.75in}
 \newif\ifsignature
 
 \RequirePackage{titling}
-\RequirePackage[margin=\dlejeunemargin]{geometry}
+\RequirePackage[margin=\dlejeunemargin,includehead]{geometry}
 \RequirePackage{fancyhdr}
 
 \RequirePackage[T1]{fontenc}

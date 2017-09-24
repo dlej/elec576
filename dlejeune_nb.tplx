@@ -10,7 +10,16 @@
 ((* endblock docclass *))
 
 ((* block commands *))
-    \usepackage[margin=\dlejeunemargin]{geometry}
+    \usepackage[margin=\dlejeunemargin,includehead]{geometry}
+    \def\dlejeunefigurescale{0.5}
+
+    \makeatletter
+    \def\gnewcommand{\g@star@or@long\new@command}
+    \def\grenewcommand{\g@star@or@long\renew@command}
+    \def\g@star@or@long#1{%
+      \@ifstar{\let\l@ngrel@x\global#1}{\def\l@ngrel@x{\long\global}#1}}
+    \makeatother
+
 ((* endblock commands *))
 
 %===============================================================================
@@ -84,8 +93,36 @@
 ((* block markdowncell *))
     \setlength{\parindent}{0mm}
     \setlength{\parskip}{3mm}
+    \setlength{\abovedisplayskip}{-0.5em} % compensate for nbconvert markdown paragraphs
+    \setlength{\belowdisplayskip}{0.5em}
+    \setlength{\abovedisplayshortskip}{\abovedisplayskip}
+    \setlength{\belowdisplayshortskip}{\belowdisplayskip}
     ((( super() )))
 ((* endblock markdowncell *))
+
+%===============================================================================
+$ Figures
+%===============================================================================
+
+((*- block data_png -*))((( custom_draw_figure(output.metadata.filenames['image/png'], cell.metadata.figurescale) )))((*- endblock -*))
+((*- block data_jpg -*))((( custom_draw_figure(output.metadata.filenames['image/jpeg'], cell.metadata.figurescale) )))((*- endblock -*))
+((*- block data_svg -*))((( custom_draw_figure(output.metadata.filenames['image/svg+xml'], cell.metadata.figurescale) )))((*- endblock -*))
+((*- block data_pdf -*))((( custom_draw_figure(output.metadata.filenames['application/pdf'], cell.metadata.figurescale) )))((*- endblock -*))
+
+% Draw a figure using the graphicx package.
+((* macro custom_draw_figure(filename, figurescale) -*))
+((* set filename = filename | posix_path *))
+((*- block figure scoped -*))
+    \begin{center}
+((*- if figurescale -*))
+    \adjustimage{max size={((( figurescale )))\linewidth}{((( figurescale )))\paperheight}}{((( filename )))}
+((*- else -*))
+    \adjustimage{max size={\dlejeunefigurescale\linewidth}{\dlejeunefigurescale\paperheight}}{((( filename )))}
+((*- endif -*))
+    \end{center}
+    %{ \hspace*{\fill} \\}
+((*- endblock figure -*))
+((*- endmacro -*))
 
 %===============================================================================
 %===============================================================================
@@ -107,9 +144,12 @@
 
 % Display stream ouput with coloring
 ((* block stream *))
+((*- if cell.metadata.hide_stream -*))
+((*- else -*))
     \begin{Verbatim}[commandchars=\\\{\},fontsize=\footnotesize]
 ((( output.text | wrap_text(128) | escape_latex | ansi2latex )))
     \end{Verbatim}
+((*- endif -*))
 ((* endblock stream *))
 
 ((* block execute_result scoped *))

@@ -185,3 +185,18 @@ $ Figures
 % END FROM http://www.markus-beuckelmann.de/blog/customizing-nbconvert-pdf.html
 %===============================================================================
 %===============================================================================
+
+%===============================================================================
+% Bibliography
+%===============================================================================
+
+((*- if nb.metadata["latex_metadata"] -*))
+((*- if nb.metadata["latex_metadata"]["bibliography"] -*))
+
+((* block bibliography *))
+\bibliographystyle{plain}
+\bibliography{((( nb.metadata["latex_metadata"]["bibliography"] )))}
+((* endblock bibliography *))
+
+((*- endif -*))
+((*- endif -*))

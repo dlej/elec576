@@ -9,6 +9,14 @@ from sklearn.preprocessing import OneHotEncoder
 class DeepNeuralNetwork(object):
 
     def __init__(self, input_dim, layer_specs, loss=None, reg_penalty=1e-2, seed=0):
+        '''
+
+        :param input_dim:
+        :param layer_specs: list [(output_width, ActivationFunction)] of specs for each layer
+        :param loss:
+        :param reg_penalty:
+        :param seed:
+        '''
 
         np.random.seed(seed)
         self.input_dim = input_dim
